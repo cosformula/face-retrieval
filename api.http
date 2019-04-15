@@ -1,0 +1,72 @@
+
+# API 参考文档
+@host = http://localhost:8000
+@contentType = application/json
+@userID = id
+@password = pass
+@libraryID = 1
+@distanceID = 1
+# @name login
+POST {{host}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "userID": "{{userID}}",
+    "password": "{{password}}"
+}
+
+###
+
+# @name distances
+GET {{host}}/distances/?libraryID={{libraryID}}
+
+###
+
+# @name distances
+GET {{host}}/distances
+
+###
+
+
+
+# @name libraries
+GET {{host}}/libraries
+
+###
+
+# @name library
+GET {{host}}/libraries/orlimages
+
+###
+
+# @name photos
+GET {{host}}/photos/orlimages
+
+###
+
+# @name photo
+GET {{host}}/photos/orlimages/
+
+###
+
+# @name create_retrieve
+POST {{host}}/retrieves
+Content-Type: {{contentType}}
+
+{
+    "libraryID": {{libraryID}},
+    "distanceID": {{distanceID}}
+}
+
+###
+
+# @name create_iteration
+POST {{host}}/retrieves/1/iterations
+Content-Type: {{contentType}}
+
+{
+    "no": 0,
+    "select": "0"
+}
+###
+

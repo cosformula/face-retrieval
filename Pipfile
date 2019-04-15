@@ -1,0 +1,34 @@
+[[source]]
+url = "https://pypi.douban.com/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+falcon = "*"
+gunicorn = "*"
+peewee = "*"
+"psycopg2cffi" = "*"
+falcon-jsonify = "*"
+uuid = "*"
+falcon-multipart = "*"
+gevent = "*"
+torch = "*"
+numpy = "*"
+torchvision = "*"
+pillow = "*"
+autopep8 = "*"
+pylint = "*"
+pep8 = "*"
+huey = "*"
+redis = "*"
+
+[dev-packages]
+pytest = "*"
+"pep8" = "*"
+pylint = "*"
+httpie = "*"
+"autopep8" = "*"
+peewee-migrate = "*"
+
+[requires]
+python_version = "3.7.2"
