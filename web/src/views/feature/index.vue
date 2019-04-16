@@ -49,12 +49,12 @@
         el-form-item(required label="图片库" prop="libraryId")
           el-select(@change="updateDistances" v-model="temp.libraryId" placeholder="请选择图片库" style="width: 100%;")
             el-option(v-for="lib in libraries" :label="lib.name" :key="lib.id" :value="lib.id")
-        el-form-item
+        // el-form-item
           el-switch(v-model="temp.local" active-text="本地生成特征" inactive-text="导入特征文件")
         template(v-if="temp.local")
-          el-form-item(:label="'特征算法'" prop="feature" )
+          el-form-item(:label="'特征算法'" prop="algorithm" )
             // el-input(v-model="temp.feature" disabled)
-            el-select(v-model="temp.feature" placeholder="请选择" style="width:100%;")
+            el-select(v-model="temp.algorithm" placeholder="请选择" style="width:100%;")
               el-option(v-for="item in featureOptions"
                 :key="item.value"
                 :label="item.label"
@@ -119,9 +119,10 @@ export default {
       temp: {
         libraryId: '',
         file: '',
-        name: '22',
-        detail: '22',
-        algorithm: 'resnet50'
+        name: '',
+        detail: '',
+        algorithm: '',
+        local: true
       },
       featureOptions: [
         {
@@ -142,8 +143,8 @@ export default {
             trigger: 'blur'
           }
         ],
-        feature: [
-          { required: true, message: 'remark is required', trigger: 'blur' }
+        algorithm: [
+          { required: true, message: 'algorithm is required', trigger: 'blur' }
         ],
         detail: [
           { required: true, message: 'remark is required', trigger: 'blur' }

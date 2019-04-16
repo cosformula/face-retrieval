@@ -107,9 +107,6 @@ api.add_route('/auth/logout', auth.Logout())
 api.add_route('/distances', distances.Collection())
 api.add_route('/distances/{id}', distances.Item())
 
-# api.add_route('/photos/targets/{id}',
-#               photos.Item(ImageStore(const.TARGETS_PATH)))
-
 # photos API
 api.add_route('/photos/{library}', photos.Collection())
 api.add_route('/photos/{library}/{name}', photos.Item(library_image_store))
@@ -119,7 +116,7 @@ api.add_route('/retrieves/{retrieval_id}/iterations', iterations.Collection())
 api.add_route('/retrieves/{retrieval_id}/iterations/{no}', iterations.Item())
 
 # target API
-retrieval_image_store = ImageStore(const.RETRIEVAL_PATH)
+retrieval_image_store = ImageStore(const.LIBRARY_PATH)
 api.add_route('/retrieves/{retrieval_id}/targets',
               retrieval_target.Collection(retrieval_image_store))
 api.add_route('/retrieves/{retrieval_id}/targets/{target_name}',

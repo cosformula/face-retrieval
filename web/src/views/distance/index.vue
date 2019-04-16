@@ -49,7 +49,7 @@
         el-form-item(required label="图片库" prop="libraryId")
           el-select(@change="queryFeatures" v-model="temp.libraryId" placeholder="请选择图片库" style="width: 100%;")
             el-option(v-for="lib in libraries" :label="lib.name" :key="lib.id" :value="lib.id")
-        el-form-item
+        // el-form-item
           el-switch(v-model="temp.local" active-text="本地生成距离" inactive-text="导入距离文件")
         template(v-if="temp.local")
           el-form-item(required label="特征文件" prop="libraryId")
@@ -128,10 +128,11 @@ export default {
       temp: {
         libraryId: '',
         file: '',
-        name: '22',
-        detail: '22',
-        algorithm: 'cos',
-        featureId: ''
+        name: '',
+        detail: '',
+        algorithm: '',
+        featureId: '',
+        local: true
       },
       featureOptions: [
         {

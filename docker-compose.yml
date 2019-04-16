@@ -1,0 +1,85 @@
+version: '2'
+services:
+  backend:
+    restart: always
+    build: .
+    expose:
+      - "8000"
+    links:
+      - postgres:postgres
+      - redis:redis
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - db_nw
+      - web_nw
+    volumes:
+      - ./data/library:/data/library
+      - ./data/temp:/data/temp
+      - ./data/models:/data/models
+    command: gunicorn application.app -b 0.0.0.0:8000 -k gevent --timeout 300 --reload
+
+  huey:
+    restart: always
+    build: .
+    links:
+      - postgres:postgres
+      - redis:redis
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - db_nw
+      - web_nw
+    volumes:
+      - ./data/library:/data/library
+      - ./data/temp:/data/temp
+      - ./data/models:/data/models
+    command: huey_consumer.py application.tasks.huey
+
+  nginx:
+    restart: always
+    build: ./web/
+    ports:
+      - "80:80"
+    networks:
+      - web_nw
+    depends_on:
+      - backend
+      - huey
+    command: ["nginx", "-g", "daemon off;"]
+    # volumes:
+      # - ./web/dist:/www/static
+      # - web-dist:/www/static
+    # links:
+    #   - web:web
+
+  postgres:
+    restart: always
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/pg/:/var/lib/postgresql/data/
+    networks:
+      - db_nw
+
+  redis:
+    restart: always
+    image: redis:latest
+    ports:
+      - "6378:6379"
+    networks:
+      - web_nw
+    volumes:
+      - ./data/redis:/data
+
+networks:
+  db_nw:
+    driver: bridge
+  web_nw:
+    driver: bridge
+
+# volumes:
+#   web-dist:

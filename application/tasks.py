@@ -9,7 +9,7 @@ from shutil import copyfile
 import numpy as np
 import math
 from .vgg import vector_resnet50, vector_vggface
-huey = RedisHuey('my-app', host='localhost')
+huey = RedisHuey('face-retrieval', host='redis')
 
 feature_algo = {
     'resnet50': vector_resnet50,
@@ -59,7 +59,7 @@ def add(a, b):
 
 @huey.task()
 def init_library(library):
-    folders = ['photos', 'distances', 'retrivieves', 'features']
+    folders = ['photos', 'distances', 'retrieves', 'features']
 
     # init library data
     for folder in folders:
@@ -117,11 +117,9 @@ def init_feature(feature):
             const.LIBRARY_PATH, 'features', f'{feature.name}.dat'))
     else:
         try:
-            names = list(filter(lambda x: not x.startswith(
-                '.'), os.listdir(library.photos_path)))
+            names = list(filter(lambda x: not x.startswith('.'), os.listdir(library.photos_path)))
             names.sort()
             files = map(lambda x: os.path.join(library.photos_path, x), names)
-
             feature_fun = feature_algo[feature.algorithm]
             vector = feature_fun(files)
 
@@ -131,7 +129,8 @@ def init_feature(feature):
             array = list(map(lambda x: x[0].detach().numpy(), vector))
             np.savetxt(feature_path, array, header=' '.join(
                 names), newline='\r\n', delimiter=' ', fmt='%f', comments='')
-        except:
+        except BaseException as e:
+            print(e)
             feature.status = 'error'
             feature.save()
         else:

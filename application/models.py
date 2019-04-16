@@ -49,10 +49,6 @@ class Library(BaseModel):
     def init_library(self):
         init_library(self)
 
-    # def init_folders(self):
-    #     folders = ['photos', 'distances', 'retrivieves', 'features']
-    #     photo_folder = os.path.join(self.path, 'photos')
-
     #     # init library data
     #     for folder in folders:
     #         path = os.path.join(self.path, folder)
@@ -81,12 +77,20 @@ class Library(BaseModel):
         return os.path.join(self.path, 'photos')
 
     @property
+    def retrieves_path(self):
+        return os.path.join(self.path, 'retrieves_path')
+
+    @property
     def features_path(self):
         return os.path.join(self.path, 'features')
 
     @property
     def distances_path(self):
         return os.path.join(self.path, 'distances')
+
+    @property
+    def targets_path(self):
+        return os.path.join(self.path, 'targets')
 
     def get_photos(self):
         photos = os.listdir(self.get_path(), 'photos')
@@ -245,7 +249,7 @@ class Iteration(BaseModel):
 
     def to_json(self):
         return {
-            'retrievalID': self.retrieval.id,
+            'retrievalID': self.retrieval.id.hex,
             'no': self.no,
             'options': self.options,
             'answer': self.answer

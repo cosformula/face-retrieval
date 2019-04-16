@@ -9,13 +9,19 @@
 * 后端： Falcon + PostgreSQL
 * 前端： Vue + vue element admin
 
-## install
+## 生产环境部署
 
-pypy3
-pipenv
-postgresql
-node > 8
-yarn
+### install
+
+sudo docker-compose up -d --no-deps --build backend huey postgres redis nginx
+
+## 访问
+
+http://localhost
+
+用户名账号随便填
+
+## dev
 
 ### 后端
 
@@ -37,7 +43,7 @@ gunicorn application.app -k gevent --timeout 300 --reload
 huey_consumer.py application.tasks.huey
 
 cd web && yarn dev
-
+<!-- docker run --detach -p 80:8000 flask_gunicorn_app -->
 ## 特征文件规范
 
 ### 命名
@@ -49,18 +55,16 @@ cd web && yarn dev
 文件为CSV格式，首行为照片名列表，照片名列表请按字符串升序，例如。
 特征文件的照片列表应该和照片库的照片列表完全一致（数量一致，文件名一致）
 `
-1.jpg,2.jpg,3.jpg
+1.jpg 2.jpg 3.jpg
 // 1.jpg 的维度特征
 // 2.jpg 的维度特征
 // 3.jpg 的维度特征
-// 最后一行的第一列用于备注
 `
 
 ## 距离文件规范
 
 ### 命名
 
-<!-- *.dat -->
 
 ### 格式
 
@@ -68,8 +72,14 @@ cd web && yarn dev
 距离文件的照片列表应该和照片库的照片列表完全一致（数量一致，文件名一致）
 
 `
-（备注）亦可留空 ,1.jpg,         2.jpg,                3.jpg
-1.jpg, 0  ,   dis('1.jpg', '2.jpg'), dis('1.jpg', '3.jpg')
-2.jpg, /  ,             0          , dis('1.jpg', '3.jpg')
-3.jpg, /  ,             /          ,        0
+（备注）亦可留空 1.jpg,         2.jpg               3.jpg
+1.jpg 0     dis('1.jpg', '2.jpg') dis('1.jpg', '3.jpg')
+2.jpg /               0           dis('1.jpg', '3.jpg')
+3.jpg /               /                  0
 `
+
+<!-- # docker -->
+
+<!-- docker build .  -t cosformula/face-retrievatl:<tag> -->
+<!-- docker-compose up -d --no-deps --build web postgres redis
+docker-compose run web -->

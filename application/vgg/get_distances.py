@@ -37,7 +37,7 @@ def vector_resnet50(files):
     resnet50.fc = torch.nn.Sequential(*list(resnet50.fc.children())[:-1])
     vectors = []
     for filepath in files:
-
+        print(filepath)
         image = Image.open(filepath)
         image = image.resize((224, 224))
 

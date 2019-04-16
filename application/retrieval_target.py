@@ -13,31 +13,30 @@ class Collection(object):
         self._image_store = image_store
 
     def on_get(self, req, resp, retrieval_id):
-        path = os.path.join(const.RETRIEVAL_PATH, retrieval_id, 'targets')
-        if not os.path.isdir(path):
-            resp.status = falcon.HTTP_404
-            return
+        # if not os.path.isdir(path):
+        #     resp.status = falcon.HTTP_404
+        #     return
 
-        photos = os.listdir(path)
-        path_prefix = '/'.join(['retrieves', retrieval_id, 'targets'])
-        resp.media = [
-            {'href': '/'.join([path_prefix, photo])} for photo in photos
-        ]
+        # photos = os.listdir(path)
+        # path_prefix = '/'.join(['retrieves', retrieval_id, 'targets'])
+        # resp.media = [
+        #     {'href': '/'.join([path_prefix, photo])} for photo in photos
+        # ]
         resp.status = falcon.HTTP_200
 
     def on_post(self, req, resp, retrieval_id):
-        path = os.path.join(retrieval_id, 'targets')
         retrieval = Retrieval.get_or_none(id=retrieval_id)
+        library = retrieval.library
+        path = os.path.join(library.retrieves_path, retrieval_id, 'targets')
+        os.makedirs(path)
         image = req.get_param('file')
         if image is not None:
             name = self._image_store.save(path, image.file, image.type)
         else:
-            library = retrieval.library
             photos = library.photos
             index = req.media.get('index') or random.randrange(0, len(photos))
             photo_name = photos[index]
-            fd = os.open(os.path.join(const.LIBRARY_PATH,
-                                      library. name, 'photos', photo_name))
+            fd = os.open(os.path.join(library.photos_path, photo_name))
             name = self._image_store.save(
                 path, fd, mimetypes.guess_type(photo_name)[0])
         retrieval.target = name
@@ -57,8 +56,9 @@ class Item(object):
         self._image_store = image_store
 
     def on_get(self, req, resp, retrieval_id, target_name):
-        # retrieval = Retrieval.get_or_none(id=retrieval_id)
-        # target_name = retrieval.target
+        retrieval = Retrieval.get_or_none(id=retrieval_id)
+        library = retrieval.library
+        path = os.path.join(library.retrieves_path, retrieval_id, 'targets')
         resp.content_type = mimetypes.guess_type(target_name)[0]
         resp.stream, resp.stream_len = self._image_store.open(
-            os.path.join(retrieval_id, 'targets', target_name))
+            os.path.join(path, target_name))
