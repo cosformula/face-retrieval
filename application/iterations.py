@@ -59,17 +59,20 @@ class Collection(object):
         iteration.save()
         retrieval.iterator_pointer = no
         retrieval.save()
-        resp.media = [
-            {
-                'url': '/'.join(['/api', 'photos', library.name,
-                                 distance.photos_list[index]]),
-                'status': {
-                    'prob': distribution[index],
-                    'lastProb': last_distribution[index]
-                },
-                'name': distance.photos_list[index]
-            } for index in option_indexes
-        ]
+        resp.media = {
+            'id' : iteration.no,
+            'photos': [
+                {
+                    'url': '/'.join(['/api', 'photos', library.name,
+                                     distance.photos_list[index]]),
+                    'status': {
+                        'prob': distribution[index],
+                        'lastProb': last_distribution[index]
+                    },
+                    'name': distance.photos_list[index]
+                } for index in option_indexes
+            ],
+        }
 
 
 class Item(object):

@@ -96,19 +96,6 @@ class Library(BaseModel):
         photos = os.listdir(self.get_path(), 'photos')
         return sorted(photos)
 
-        # self.distances_path, feature_name)
-
-    # def import_feature(self, ):
-    #     pass
-
-    # def import_distance(self):
-    #     pass
-
-
-# class Algorithm(BaseModel):
-#     name = CharField()
-
-
 class Feature(BaseModel):
     name = CharField(unique=True, index=True)
     # algorithm = ForeignKeyField(Algorithm, backref='features')
@@ -119,26 +106,16 @@ class Feature(BaseModel):
     from_temp = CharField(default='')
     progress = IntegerField(default=0)
     status = CharField(default='')
+    # error = CharField(default='')
 
     def to_json(self):
         return {
             'id': self.id,
             'name': self.name,
             'available': self.available,
-            'status': self.status
+            'status': self.status,
+            # 'error': self.error
         }
-
-    # def init_feature(self, algorithm, feature_name):
-    # self.status = '正在计算...'
-    # self.save()
-    # names, vectors = algorithm(self.library.photos_path, step)
-    # self.status = '计算完成，正在生成文件...'
-
-    # self.status = '整理中...'
-    # self.save()
-    # , os.path.join(
-    # @staticmethod
-
 
 class Distance(BaseModel):
     # id = UUIDField(primary_key=True, default=uuid.uuid4)
@@ -152,7 +129,7 @@ class Distance(BaseModel):
     # photos_map = JSONField(null=True)
     photos_list = ArrayField(CharField, null=True)
     from_temp = CharField(default='')
-
+    progress = IntegerField(default=0)
     # timestamp = DateTimeField(default=datetime.now)
     available = BooleanField(default=True, index=True)
     status = CharField(default='')

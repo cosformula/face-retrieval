@@ -52,7 +52,8 @@ class Collection(object):
         init_feature(feature)
 
         resp.status = falcon.HTTP_200
-        resp.media = feature.to_json()
+        resp.media = {
+            **feature.to_json(), 'library': feature.library.to_json()}
 
 
 class Item(object):

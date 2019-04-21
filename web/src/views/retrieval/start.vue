@@ -32,7 +32,7 @@
             tbody
               tr
                 th 迭代次数
-                td {{ iterationPointer-1 }} / {{retrieval.maxIteration}}
+                td {{ iterationPointer - 1 }} / {{retrieval.maxIteration}}
               //- tr
                 th 距离：
                 <td>{{ retrieval.distance.name }}</td>
@@ -43,7 +43,7 @@
                 th 容量：
                 <td>{{ retrieval.library.name }}</td>
           div(style="text-align:center;")
-            el-progress(:width="60" :percentage="Math.round(100*(iterationPointer-1)/retrieval.maxIteration)")
+            el-progress(:width="60" :percentage="Math.round(100*(iterationPointer - 1)/retrieval.maxIteration)")
       el-col(:span="6" :xs="{span: 24}")
         el-card(shadow="hover" style="height:200px;position:relative;")
           div(slot="header" class="clearfix" style="display:flex;justify-content:space-between;")
@@ -71,12 +71,18 @@
         history-card(:selected-history="selectedHistory" :library-name="libraryName")
 
     //- div(style="flex:1;display:flex;align-items:center;")
-    el-row.photos(:gutter="10" style="flex:1;" v-loading="loadingPhotos")
-      //- div(style="flex:1;box-sizing:border-box;padding:20px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;")
-      el-col(v-for="(photo,index) in photos" :span="photoSpan" :key="index" :style="{marginBottom:'0px',height:`${100/(photos.length/(24/photoSpan))}%`}")
-        //- div(style="position:relative;height:40%;padding-left:10%;margin:0 7.5%;" v-for="(photoName,index) in photos" )
-        photo-card(style="height:100%;" :photo="photo"  @click.native="getNextIteration(photo)")
-          //- divstyle="height:20px">{{ photoName }}</div>
+    //  indicator-position="inside"
+    el-carousel(ref="carousel" indicator-position="none" :loop="false" :autoplay="false" style="flex:1;" height="100%" arrow="never" v-if="iterations.length" v-loading="loadingPhotos")
+      el-carousel-item(v-for="(iteration, index) in iterations" :key="index"  style="height:100%;")
+        el-row.photos(:gutter="10" style="height:100%;width:100%;" v-loading="iteration.loading")
+          el-col(v-for="(photo,index) in iteration.photos" :span="photoSpan" :key="photo" :style="{marginBottom:'0px',height:`${100/(iteration.photos.length/(24/photoSpan))}%`}")
+            photo-card(style="height:100%;" :photo="photo"  @click.native="getNextIteration(photo)")
+      el-carousel-item(style="height:100%;overflow:scroll;")
+        el-row(v-for="(iteration, index) in iterations" :key="index" style="")
+          el-row.photos(:gutter="10" style="width:100%;" v-loading="iteration.loading")
+            el-col(v-for="(photo,index) in iteration.photos" :span="photoSpan" :key="photo" :style="{marginBottom:'0px',height:`${100/(iteration.photos.length/(24/photoSpan))}%`}")
+              photo-card(style="height:100%;" :photo="photo"  @click.native="getNextIteration(photo)")
+    div(v-else style="flex:1;")
     el-row.operation(:gutter="12" style="" type="flex" justify="center")
       el-col(:span="4" :xs="{span: 8}")
         el-button(:disabled="iterationPointer <= 1" @click="back") 上一步
@@ -116,6 +122,7 @@ export default {
       iterations: [],
       retrieval: {},
       iterationPointer: 0,
+      iterationIndex: 0,
       selectedHistory: [],
       libraryName: '',
       loadingPhotos: false,
@@ -136,16 +143,18 @@ export default {
       }
     },
     photoSpan: function() {
-      if (this.photos.length === 8) {
-        return 6
-      } else if (this.photos.length === 12) {
-        return 6
-      } else if (this.photos.length === 18) {
-        return 4
-      } else if (this.photos.length === 24) {
-        return 3
+      switch (this.retrieval.maxIterationFaces) {
+        case 8:
+          return 6
+        case 12:
+          return 6
+        case 18:
+          return 4
+        case 24:
+          return 3
+        default:
+          return 4
       }
-      return 4
     }
   },
   mounted: function() {
@@ -161,6 +170,9 @@ export default {
           }
         ]
       }
+      this.iterations = Array(this.retrieval.maxIteration).fill({
+        loading: true
+      })
       this.getNextIteration('0')
     })
   },
@@ -188,8 +200,14 @@ export default {
       return isJPG && isLt2M
     },
     getNextIteration(selectedPhoto) {
-      if (this.iterations.length > this.retrieval.maxIteration) {
-        this.resultDialogVisible = true
+      // if (this.iterations.length 》= this.retrieval.maxIteration) {
+      //   this.resultDialogVisible = true
+      //   return
+      // }
+      if (this.iterationPointer >= this.retrieval.maxIteration) {
+        // this.resultDialogVisible = true
+        this.$refs.carousel.setActiveItem(this.iterationPointer)
+        this.iterationPointer += 1
         return
       }
       this.loadingPhotos = true
@@ -198,10 +216,11 @@ export default {
         this.iterationPointer,
         selectedPhoto.name
       ).then(resp => {
-        if (this.iterations.length === this.retrieval.maxIteration) {
-          this.resultDialogVisible = true
-        }
-        this.iterations.push(resp.data)
+        this.iterations.splice(this.iterationPointer, 1, {
+          ...resp.data,
+          loading: false
+        })
+        this.$refs.carousel.setActiveItem(this.iterationPointer)
         this.iterationPointer && this.selectedHistory.unshift(selectedPhoto)
         this.iterationPointer += 1
         this.loadingPhotos = false

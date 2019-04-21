@@ -23,6 +23,9 @@ http://localhost
 
 ## dev
 
+
+docker-compose run  --service-ports backend
+
 ### 后端
 
 apt install postgresql

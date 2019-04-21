@@ -41,7 +41,8 @@ def cos(vector):
             # denominator = math.sqrt(np.sum(vector[i]*vector[i]))*math.sqrt(np.sum(vector[j]*vector[j]))
             # distances[i][j] = 1 - float(numerator/denominator)
             # print((i*l+j+1)/(l*l))
-            distances[i][j] = 1 - np.dot(vector[i], vector[j])/(np.linalg.norm(vector[i])*(np.linalg.norm(vector[j])))
+            distances[i][j] = 1 - np.dot(vector[i], vector[j]) / \
+                (np.linalg.norm(vector[i])*(np.linalg.norm(vector[j])))
     return distances
 
 
@@ -110,14 +111,19 @@ def init_feature(feature):
         photos_set = set(photos_list)
         library_photos_set = set(library.photos)
         if not photos_set.issubset(library_photos_set):
-            print('该距离文件不是此人脸库的子集')
+            feature.status = '该距离文件不是此人脸库的子集'
+            feature.save()
 
         # copy file
         copyfile(file_name, os.path.join(
-            const.LIBRARY_PATH, 'features', f'{feature.name}.dat'))
+            library.features_path, f'{feature.name}'))
+        feature.available = True
+        feature.status = 'ready'
+        feature.save()
     else:
         try:
-            names = list(filter(lambda x: not x.startswith('.'), os.listdir(library.photos_path)))
+            names = list(filter(lambda x: not x.startswith(
+                '.'), os.listdir(library.photos_path)))
             names.sort()
             files = map(lambda x: os.path.join(library.photos_path, x), names)
             feature_fun = feature_algo[feature.algorithm]
@@ -137,13 +143,6 @@ def init_feature(feature):
             feature.available = True
             feature.status = 'ready'
             feature.save()
-        # .detach().numpy()
-        # with open(feature_path, 'w', newline='') as csvfile:
-        #     spamwriter = csv.writer(csvfile, delimiter=',',
-        #                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        #     spamwriter.writerow(names)
-        #     for row in vector:
-        #         spamwriter.writerow(row[0].detach().numpy())
 
 
 @huey.task()
@@ -158,11 +157,17 @@ def init_distance(distance):
         photos_set = set(photos_list)
         library_photos_set = set(library.photos)
         if not photos_set.issubset(library_photos_set):
-            print('该距离文件不是此人脸库的子集')
+            distance.status = '该距离文件不是此人脸库的子集'
+            distance.save()
 
         # copy file
         copyfile(file_name, os.path.join(
-            const.LIBRARY_PATH, 'distances', f'{distance.name}.dat'))
+            library.distances_path, f'{distance.name}'))
+
+        distance.available = True
+        distance.status = 'ready'
+        distance.photos_list = photos_list
+        distance.save()
     else:
         feature_file_path = os.path.join(
             library.features_path, distance.feature.name)
@@ -170,24 +175,15 @@ def init_distance(distance):
         with open(feature_file_path) as f:
             names = f.readline().split()
 
-        vectors = np.recfromtxt(feature_file_path, delimiter=" ", skip_header=1)
+        vectors = np.recfromtxt(
+            feature_file_path, delimiter=" ", skip_header=1)
 
         distance_vector = distance_algo[distance.algorithm](vectors)
 
         distance_path = os.path.join(library.distances_path, distance.name)
 
-        # np.savetxt(feature_path, vector.numpy(), header=' '.join(names),
-        #            comments='', newline='\r\n', fmt='%f')
-        print(distance_vector)
-        np.savetxt(distance_path, distance_vector, header=' '.join(names), newline='\r\n', delimiter=' ', fmt='%f', comments='')
-
-        # with open(distance_path, 'w', newline='') as csvfile:
-        #     spamwriter = csv.writer(csvfile, delimiter=' ',
-        #                             quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        #     print(names)
-        #     spamwriter.writerow(names)
-        #     for row in distance_vector:
-        #         spamwriter.writerow(row)
+        np.savetxt(distance_path, distance_vector, header=' '.join(
+            names), newline='\r\n', delimiter=' ', fmt='%f', comments='')
 
         distance.available = True
         distance.status = 'ready'

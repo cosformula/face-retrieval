@@ -3,8 +3,8 @@ services:
   backend:
     restart: always
     build: .
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     links:
       - postgres:postgres
       - redis:redis
@@ -18,11 +18,10 @@ services:
       - ./data/library:/data/library
       - ./data/temp:/data/temp
       - ./data/models:/data/models
-      - ./application:/app/application
     command: gunicorn application.app -b 0.0.0.0:8000 -k gevent --timeout 300 --reload
 
   huey:
-    restart: "no"
+    restart: always
     build: .
     links:
       - postgres:postgres
@@ -37,7 +36,6 @@ services:
       - ./data/library:/data/library
       - ./data/temp:/data/temp
       - ./data/models:/data/models
-      - ./application:/app/application
     command: huey_consumer.py application.tasks.huey
 
   nginx:

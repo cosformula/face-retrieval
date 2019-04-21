@@ -8,11 +8,10 @@ import falcon
 import falcon_jsonify
 from falcon_multipart.middleware import MultipartMiddleware
 from . import const, iterations, libraries, photos, retrieves, distances, users, retrieval_target, files, auth, features
-from .models import Distance, Library, User, create_tables
+from .models import Distance, Library, User, create_tables, Feature
 from .utils import db, get_distance_path, get_photo_path
 from .image_store import ImageStore
 from .middleware import ListqueryMiddleware
-
 
 def refresh_libs():
     lib_dir = const.LIBRARY_PATH
@@ -25,27 +24,34 @@ def refresh_libs():
         library.count = len(photos)
         library.photos = photos
         library.save()
-        distances = os.listdir(library.distances_path)
-        for distance_name in distances:
-            if distance_name[0] == '.':
+        features = os.listdir(library.features_path)
+        for feature_name in features:
+            if feature_name[0] == '.':
                 continue
-            fp = get_distance_path(lib_name, distance_name)
+            fp = os.path.join(library.features_path, feature_name)
             with open(fp, 'r') as f:
                 for line in f:
                     photos_list = line.split()
                     break
-            # print(Distance.get(name=distance_name, library=library))
-            # print(distance_name)
+            print(feature_name)
+            feature, created = Feature.get_or_create(
+                name=feature_name, library=library)
+            feature.save()
+        
+        distances = os.listdir(library.distances_path)
+        for distance_name in distances:
+            if distance_name[0] == '.':
+                continue
+            fp = os.path.join(library.distances_path, distance_name)
+            with open(fp, 'r') as f:
+                for line in f:
+                    photos_list = line.split()
+                    break
+            print(distance_name)
             distance, created = Distance.get_or_create(
                 name=distance_name, library=library)
             distance.photos_list = photos_list
             distance.save()
-
-            # photos_map = {}
-            # for(index,value) in enumerate(photos_list):
-            # photos_map[value] = index
-            # distance.photos_list = photos_list
-            # distance.photos_map = photos_map
 
 
 def init_system():

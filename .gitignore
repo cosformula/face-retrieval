@@ -2,7 +2,6 @@ node_modules
 data/*
 .env
 .vscode
-library
 .DS_Store
 web-legacy
 *.pyc

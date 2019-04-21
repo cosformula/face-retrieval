@@ -4,6 +4,7 @@
       el-input.filter-item(:placeholder="$t('table.title')", v-model='listQuery.title', style='width: 200px;', @keyup.enter.native='handleFilter')
         el-button.filter-item(v-waves='', type='primary', icon='el-icon-search', @click='handleFilter') {{ $t('table.search') }}
         el-button.filter-item(v-waves='', :loading='downloadLoading', type='primary', icon='el-icon-download', @click='handleDownload') {{ $t('table.export') }}
+
     el-table.table(v-loading='listLoading', :key='tableKey', :data='list', border='', fit='', highlight-current-row='')
       el-table-column(:label="'序号'", align='center', width='325')
         template(slot-scope='scope')
@@ -23,8 +24,10 @@
       el-table-column(:label="'备注'", align='center')
         template(slot-scope='scope')
           span {{ scope.row.strategy }}
+
     .pagination-container
       el-pagination(:current-page='listQuery.page', :page-sizes='[10,20,30, 50]', :page-size='listQuery.limit', :total='total', background='', layout='total, sizes, prev, pager, next, jumper', @size-change='handleSizeChange', @current-change='handleCurrentChange')
+
     el-dialog(:title='textMap[dialogStatus]', :visible.sync='dialogFormVisible')
       el-form(ref='dataForm', :rules='rules', :model='temp', label-position='left', label-width='70px', style='width: 400px; margin-left:50px;')
         el-form-item(:label="$t('table.type')", prop='type')
