@@ -15,6 +15,11 @@
 
 sudo docker-compose up -d --no-deps --build backend huey postgres redis nginx
 
+### up
+
+`sudo docker-compose -f docker-compose.prod.yml up -d`
+
+
 ## 访问
 
 http://localhost
