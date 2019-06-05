@@ -19,6 +19,10 @@ sudo docker-compose -f docker-compose.prod.yml build
 
 `sudo docker-compose -f docker-compose.prod.yml up -d`
 
+### upgrade
+
+`git pull`
+`sudo docker-compose -f docker-compose.prod.yml up -d --build`
 
 ## 访问
 
