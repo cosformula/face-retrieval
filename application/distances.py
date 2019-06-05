@@ -19,11 +19,12 @@ class Collection(object):
     def on_get(self, req, resp):
         lib_id = req.get_param('libraryID', None)
         if lib_id is not None:
-            select = Distance.select(Distance, Library).where(
+            select = Distance.select(Distance, Library).order_by(Distance.created_at.desc()).where(
                 Distance.library == lib_id)
         else:
-            select = Distance.select(Distance, Library)
-        select = select.join(Library, JOIN.LEFT_OUTER).order_by(Distance.id)
+            select = Distance.select(Distance, Library).order_by(
+                Distance.created_at.desc())
+        select = select.join(Library, JOIN.LEFT_OUTER)
         distances = select.paginate(req.query.page, req.query.limit)
         resp.media = {
             'total': select.count(),

@@ -24,7 +24,7 @@ class Collection(object):
         else:
             select = Feature.select(Feature, Library).order_by(
                 Feature.created_at.desc())
-        select = select.join(Library, JOIN.LEFT_OUTER).order_by(Feature.id)
+        select = select.join(Library, JOIN.LEFT_OUTER)
         features = select.paginate(req.query.page, req.query.limit)
         resp.media = {
             'total': select.count(),
