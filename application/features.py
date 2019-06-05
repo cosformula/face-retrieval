@@ -19,10 +19,11 @@ class Collection(object):
     def on_get(self, req, resp):
         lib_id = req.get_param('libraryID', None)
         if lib_id is not None:
-            select = Feature.select(Feature, Library).where(
+            select = Feature.select(Feature, Library).order_by(Feature.created_at.desc()).where(
                 Feature.library == lib_id)
         else:
-            select = Feature.select(Feature, Library)
+            select = Feature.select(Feature, Library).order_by(
+                Feature.created_at.desc())
         select = select.join(Library, JOIN.LEFT_OUTER).order_by(Feature.id)
         features = select.paginate(req.query.page, req.query.limit)
         resp.media = {

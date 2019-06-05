@@ -8,7 +8,8 @@ from .models import Retrieval, Iteration, User
 class Collection(object):
 
     def on_get(self, req, resp):
-        retrieves = Retrieval.select(Retrieval, User).join(User)
+        retrieves = Retrieval.select(Retrieval, User).order_by(
+            Retrieval.created_at.desc()).join(User)
         resp.media = [{
             'id': retrieve.id,
             'user': retrieve.user,
@@ -59,7 +60,7 @@ class Collection(object):
         retrieval.iterator_pointer = no
         retrieval.save()
         resp.media = {
-            'id' : iteration.no,
+            'id': iteration.no,
             'photos': [
                 {
                     'url': '/'.join(['/api', 'photos', library.name,

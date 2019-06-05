@@ -184,7 +184,7 @@ export default {
   },
   mounted() {
     this.getList()
-    fetchLibraries().then(res => {
+    fetchLibraries({ limit: 1000 }).then(res => {
       this.libraries = res.data.items
     })
   },

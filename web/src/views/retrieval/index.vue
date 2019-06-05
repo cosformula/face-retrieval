@@ -67,7 +67,7 @@ export default {
   },
   mounted() {
     // console.log('mounted', fetchLibraries())
-    fetchLibraries().then(resp => {
+    fetchLibraries({ limit: 1000 }).then(resp => {
       this.libraries = resp.data.items
     })
   },
