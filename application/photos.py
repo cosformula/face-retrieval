@@ -1,7 +1,9 @@
 import json
-import os
-import falcon
 import mimetypes
+import os
+
+import falcon
+
 from . import const
 
 

@@ -4,12 +4,14 @@ Created on Tue Jul  3 09:42:24 2018
 
 @author: 79136
 """
+import math
 import os
+
+import dlib
 import matplotlib.image as mpimg
 import numpy as np
 from scipy import misc
-import math
-import dlib
+
 
 def findeye(srcpath,markpath,predictorpath):
     

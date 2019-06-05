@@ -1,12 +1,15 @@
+import os
+import uuid
+from datetime import datetime
+from functools import lru_cache
+
 from peewee import *
 from playhouse.postgres_ext import *
-from datetime import datetime
+
 from . import const
-import os
-from .utils import db, get_distance_path, get_photo_path
-from functools import lru_cache
-import uuid
 from .tasks import init_library
+from .utils import db, get_distance_path
+
 retrieval_strategies = {
     'random': None,
     'most_similar': None,
@@ -44,15 +47,9 @@ class Library(BaseModel):
     photos = ArrayField(CharField, null=True)
     from_temp = CharField(default='')
     count = IntegerField(default=0)
-    # cover =
-
+ 
     def init_library(self):
         init_library(self)
-
-    #     # init library data
-    #     for folder in folders:
-    #         path = os.path.join(self.path, folder)
-    #         os.makedirs(os.path.join(path)) if not os.path.isdir(path) else ...
 
     def to_json(self):
         return {
@@ -64,9 +61,6 @@ class Library(BaseModel):
             'count': self.count,
             'cover': '/'.join(['photos', self.name, self.photos[0]]) if self.count > 0 else ''
         }
-
-    # def get_photo(self, filename):
-    #     pass
 
     @property
     def path(self):

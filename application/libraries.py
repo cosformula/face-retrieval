@@ -1,12 +1,9 @@
-import falcon
-import json
-import zipfile
-import os
-import mimetypes
 import shutil
-from .models import Library
-from . import const
+
+import falcon
+
 from .hook import set_list_query
+from .models import Library
 
 
 class Collection(object):

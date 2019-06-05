@@ -1,11 +1,12 @@
-import falcon
-import json
 import os
 import uuid
-from .models import Retrieval, Library, Distance, User
-from . import utils, const
+
+import falcon
 from peewee import JOIN
+
+from . import const
 from .hook import set_list_query
+from .models import Retrieval, Library, Distance, User
 
 
 class Collection(object):
@@ -18,11 +19,6 @@ class Collection(object):
             .join(User, JOIN.LEFT_OUTER)\
             .order_by(Retrieval.id)
         retrieves = select.paginate(req.query.page, req.query.limit)
-        # doc = [{
-        #     'id': retrieve.id,
-        #     'user': retrieve.user.to_json(),
-        #     'status': retrieve.status
-        # } for retrieve in retrieves]
         resp.media = {
             'items': [retrieve.to_json() for retrieve in retrieves],
             'total': select.count()
@@ -41,9 +37,7 @@ class Collection(object):
             distance=distance, max_iteration_faces=max_iteration_faces)
         os.makedirs(os.path.join(const.LIBRARY_PATH, library.name,
                                  'retrieves', str(retrieve.id), 'targets'))
-        # pre fetch
         retrieve.distance.get_distances()
-        # retrieve.save()
         resp.media = {'id': retrieve.id.hex}
 
 
@@ -51,12 +45,6 @@ class Item(object):
 
     def on_get(self, req, resp, retrieval_id):
         retrieve = Retrieval.get_or_none(id=uuid.UUID(retrieval_id))
-        # doc = {
-        #     'id': retrieve.id,
-        #     'userID': retrieve.user.id,
-        #     'status': retrieve.status,
-        #     'iterations': [iteration.to_json() for iteration in retrieve.iterations]
-        # }
         resp.media = {**retrieve.to_json(),
                       'iterations': [iteration.to_json() for iteration in retrieve.iterations],
                       'distance': retrieve.distance.to_json(),

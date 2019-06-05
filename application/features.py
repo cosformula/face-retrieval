@@ -1,15 +1,11 @@
 import falcon
-import json
-from shutil import copyfile
-from . import const
-import csv
-import os
-from .models import Distance, Library, Feature
-# from .utils import generate_feature, calculate_distance
-from .vgg import vector_resnet50, vector_vggface
-from .tasks import init_feature
-from .hook import set_list_query
 from peewee import JOIN
+
+from .hook import set_list_query
+from .models import Library, Feature
+# from .utils import generate_feature, calculate_distance
+from .tasks import init_feature
+
 
 # def get_distances():
 #     pass

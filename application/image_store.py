@@ -1,8 +1,8 @@
-import uuid
-import os
-import re
 import io
 import mimetypes
+import os
+import re
+import uuid
 
 
 class ImageStore(object):

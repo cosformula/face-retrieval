@@ -1,9 +1,8 @@
 import falcon
-import json
+
+from .algorithms import update_probability_distribution, get_next_iteration_random, get_next_iteration_similarity, \
+    get_next_iteration_entropy
 from .models import Retrieval, Iteration, User
-from .algorithms import update_probability_distribution, get_next_iteration_random, get_next_iteration_similarity, get_next_iteration_entropy
-from . import const, utils
-import os
 
 
 class Collection(object):

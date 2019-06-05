@@ -1,17 +1,14 @@
-import io
-import json
-import mimetypes
 import os
-import re
-import uuid
+import os
+
 import falcon
-import falcon_jsonify
 from falcon_multipart.middleware import MultipartMiddleware
+
 from . import const, iterations, libraries, photos, retrieves, distances, users, retrieval_target, files, auth, features
-from .models import Distance, Library, User, create_tables, Feature
-from .utils import db, get_distance_path, get_photo_path
 from .image_store import ImageStore
-from .middleware import ListqueryMiddleware
+from .models import Distance, Library, User, create_tables, Feature
+from .utils import db
+
 
 def refresh_libs():
     lib_dir = const.LIBRARY_PATH

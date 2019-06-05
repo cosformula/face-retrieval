@@ -1,10 +1,10 @@
-import json
-import os
-import falcon
 import mimetypes
-from . import const
-from .models import Retrieval
+import os
 import random
+
+import falcon
+
+from .models import Retrieval
 
 
 class Collection(object):

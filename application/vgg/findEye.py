@@ -6,6 +6,7 @@ Created on Mon Jul  9 16:26:26 2018
 """
 
 import os
+
 import dlib
 import matplotlib.image as mpimg
 import numpy as np

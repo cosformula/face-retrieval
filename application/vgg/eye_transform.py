@@ -5,9 +5,11 @@ Created on Tue Jun 26 00:37:22 2018
 @author: 79136
 """
 
-import sys,math,Image  
-   
- # 计算两个坐标的距离  
+import Image
+import math
+
+
+# 计算两个坐标的距离
 def Distance(p1,p2):  
       dx = p2[0]- p1[0]  
       dy = p2[1]- p1[1]  

@@ -11,9 +11,9 @@
 
 ## 生产环境部署
 
-### install
+### build
 
-sudo docker-compose up -d --no-deps --build backend huey postgres redis nginx
+sudo docker-compose -f docker-compose.prod.yml build
 
 ### up
 
@@ -28,30 +28,8 @@ http://localhost
 
 ## dev
 
-
 docker-compose run  --service-ports backend
 
-### 后端
-
-apt install postgresql
-pipenv install -python pypy3
-pipenv install
-
-### 前端
-
-cd web
-yarn install
-
-
-## run
-
-pipenv shell
-<!-- gunicorn application.app -->
-gunicorn application.app -k gevent --timeout 300 --reload
-huey_consumer.py application.tasks.huey
-
-cd web && yarn dev
-<!-- docker run --detach -p 80:8000 flask_gunicorn_app -->
 ## 特征文件规范
 
 ### 命名
@@ -85,9 +63,3 @@ cd web && yarn dev
 2.jpg /               0           dis('1.jpg', '3.jpg')
 3.jpg /               /                  0
 `
-
-<!-- # docker -->
-
-<!-- docker build .  -t cosformula/face-retrievatl:<tag> -->
-<!-- docker-compose up -d --no-deps --build web postgres redis
-docker-compose run web -->

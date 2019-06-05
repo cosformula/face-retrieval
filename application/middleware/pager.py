@@ -1,6 +1,3 @@
-import random
-
-
 class ListqueryMiddleware(object):
     def process_request(self, req, resp):
         req.list_query = {}

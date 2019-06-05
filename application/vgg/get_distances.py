@@ -5,21 +5,20 @@ Created on Tue Jul  3 09:42:24 2018
 @author: 79136
 """
 
-import torch
-import torchvision.models
-from torchvision import transforms
-from PIL import Image
-import numpy as np
-import os
 import math
 
+import numpy as np
+import torch
+import torchvision.models
+from PIL import Image
+from torchvision import transforms
 
+# vffface
 def vector_vggface(files):
     vggface = torchvision.models.vgg19_bn(pretrained=True)
     vggface.classifier = torch.nn.Sequential(
         *list(vggface.classifier.children())[:-3])
     vectors = []
-    # sorted(os.listdir(path),key=lambda x:int(x[:-len(style)])):排序
     for filepath in files:
         image = Image.open(filepath)
         image = image.resize((224, 224))
@@ -31,7 +30,7 @@ def vector_vggface(files):
 
     return vectors
 
-
+# resnet50
 def vector_resnet50(files):
     resnet50 = torchvision.models.resnet50(pretrained=True)
     resnet50.fc = torch.nn.Sequential(*list(resnet50.fc.children())[:-1])

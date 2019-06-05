@@ -1,8 +1,10 @@
 
-from playhouse.db_url import connect
-from playhouse.pool import PooledPostgresqlExtDatabase
 import os
+
+from playhouse.db_url import connect
+
 from . import const
+
 db = connect(const.DB)
 
 

@@ -1,7 +1,6 @@
 import falcon
-import json
+
 from .models import User
-from . import utils
 
 
 class Collection(object):

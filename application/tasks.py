@@ -1,14 +1,15 @@
 
-from huey import RedisHuey, crontab
-import os
-from . import const
-import zipfile
 import mimetypes
-import csv
+import os
+import zipfile
 from shutil import copyfile
+
 import numpy as np
-import math
+from huey import RedisHuey
+
+from . import const
 from .vgg import vector_resnet50, vector_vggface
+
 huey = RedisHuey('face-retrieval', host='redis')
 
 feature_algo = {
@@ -20,13 +21,11 @@ feature_algo = {
 def scd(vector):
     l = len(vector)
     distances = np.zeros((l, l))
-    # i<j
     for i in range(l):
         for j in range(l):
             numerator = abs(vector[i]-vector[j])
             denominator = vector[i]+vector[j]
             distances[i][j] = float(np.sum(numerator/denominator))
-            # print((i*l+j+1)/(l*l))
 
     return distances
 
@@ -34,14 +33,9 @@ def scd(vector):
 def cos(vector):
     l = len(vector)
     distances = np.zeros((l, l))
-    # i<j
     for i in range(l):
         for j in range(l):
-            # numerator = np.sum(vector[i]*vector[j])
-            # denominator = math.sqrt(np.sum(vector[i]*vector[i]))*math.sqrt(np.sum(vector[j]*vector[j]))
-            # distances[i][j] = 1 - float(numerator/denominator)
-            # print((i*l+j+1)/(l*l))
-            distances[i][j] = 1 - np.dot(vector[i], vector[j]) / \
+            distances[i][j] = np.dot(vector[i], vector[j]) / \
                 (np.linalg.norm(vector[i])*(np.linalg.norm(vector[j])))
     return distances
 
